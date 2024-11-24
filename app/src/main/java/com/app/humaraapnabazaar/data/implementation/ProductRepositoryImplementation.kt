@@ -60,4 +60,16 @@ constructor(private val productDataSource: ProductDataSource) : ProductRepositor
   override suspend fun removeProductFromCart(productId: String): Response<AddToCartResponse> {
     return productDataSource.removeProductFromCart(productId)
   }
+
+  override suspend fun getProductsByPriceRange(
+    minPrice: Double,
+    maxPrice: Double,
+    category: String,
+  ): Response<ProductByCategoryResponse>{
+    return productDataSource.getProductsByPriceRange(
+      minPrice = minPrice,
+      maxPrice = maxPrice,
+      category = category,
+    )
+  }
 }

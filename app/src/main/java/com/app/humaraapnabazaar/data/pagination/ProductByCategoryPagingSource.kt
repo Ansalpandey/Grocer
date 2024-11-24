@@ -18,18 +18,15 @@ constructor(private val productRepository: ProductRepository, private val catego
       val response = productRepository.getProductsByCategory(category, page, params.loadSize)
       if (response.isSuccessful) {
         val products = response.body()?.products ?: emptyList()
-        Log.d("PagingSource", "Loaded products: $products")
         return LoadResult.Page(
           data = products,
           prevKey = if (page == 1) null else page - 1,
           nextKey = if (products.isEmpty()) null else page + 1
         )
       } else {
-        Log.e("PagingSource", "Failed to load products: ${response.message()}")
         return LoadResult.Error(Exception("API call failed"))
       }
     } catch (exception: Exception) {
-      Log.e("PagingSource", "Error loading products: ${exception.message}")
       return LoadResult.Error(exception)
     }
   }

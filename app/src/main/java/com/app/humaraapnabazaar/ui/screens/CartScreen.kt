@@ -2,6 +2,7 @@ package com.app.humaraapnabazaar.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,8 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,7 +40,6 @@ import com.app.humaraapnabazaar.data.model.ShippingAddressX
 import com.app.humaraapnabazaar.ui.components.CartItem
 import com.app.humaraapnabazaar.ui.navigation.Route
 import com.app.humaraapnabazaar.ui.viewmodels.ProductViewModel
-
 @Composable
 fun CartScreen(
   modifier: Modifier = Modifier,
@@ -47,17 +49,19 @@ fun CartScreen(
   val cartItems = productViewModel.cartItems.collectAsState()
   LaunchedEffect(key1 = cartItems) { productViewModel.getCartItems() }
 
-  // Calculate the total cost of the cart items
-  val totalCost = cartItems.value.sumOf { it.product.price * it.quantity }
+  // Calculate the total cost and total savings
+  val totalCost = cartItems.value.sumOf {
+    val discountedPrice = it.product.price * (1 - it.product.discount / 100.0)
+    discountedPrice * it.quantity
+  }
+  val totalSavings = cartItems.value.sumOf {
+    val savingsPerItem = it.product.price - (it.product.price * (1 - it.product.discount / 100.0))
+    savingsPerItem * it.quantity
+  }
 
   Column(modifier = Modifier.fillMaxSize().safeContentPadding()) {
     // Header
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-      Icon(
-        imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
-        contentDescription = "back",
-        modifier = Modifier.clickable { navController.popBackStack() },
-      )
       Spacer(modifier = Modifier.width(8.dp))
       Text(
         text = "Shopping Cart",
@@ -102,16 +106,19 @@ fun CartScreen(
     // Cart Items
     LazyColumn(
       modifier =
-        Modifier.weight(1f) // Allow the cart items to scroll if they exceed the screen height
-          .fillMaxSize()
+      Modifier.weight(1f) // Allow the cart items to scroll if they exceed the screen height
+        .fillMaxSize()
     ) {
       items(cartItems.value) {
         CartItem(
           cartResponseItem = it,
           onRemove = { productViewModel.removeProductFromCart(productId = it.product._id) },
+          onClick = { navController.navigate(Route.ProductDetailsScreen(productId = it.product._id)) }
         )
       }
     }
+
+    // Total Cost and Savings Section
     Column(
       modifier = Modifier.fillMaxWidth().padding(16.dp),
       horizontalAlignment = Alignment.CenterHorizontally,
@@ -127,9 +134,25 @@ fun CartScreen(
           fontWeight = FontWeight.Bold,
         )
         Text(
-          text = "Rs. $totalCost",
+          text = "₹${"%.2f".format(totalCost)}",
           style = MaterialTheme.typography.headlineLarge,
           fontWeight = FontWeight.ExtraBold,
+        )
+      }
+      Row(
+        modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+      ) {
+        Text(
+          text = "You Saved",
+          style = MaterialTheme.typography.bodyLarge,
+          fontWeight = FontWeight.Bold,
+        )
+        Text(
+          text = "₹${"%.2f".format(totalSavings)}",
+          color = Color(0xFF43A047), // Green for savings
+          style = MaterialTheme.typography.titleMedium,
         )
       }
       Button(
@@ -144,12 +167,12 @@ fun CartScreen(
           navController.navigate(
             Route.CreateOrderScreen(
               createOrderRequest =
-                CreateOrderRequest(
-                  orderItems = orderItems,
-                  shippingAddress =
-                    ShippingAddressX(city = "", address = "", country = "", postalCode = ""),
-                  totalPrice = totalCost,
-                )
+              CreateOrderRequest(
+                orderItems = orderItems,
+                shippingAddress =
+                ShippingAddressX(city = "", address = "", country = "", postalCode = ""),
+                totalPrice = totalCost,
+              )
             )
           )
         },
@@ -160,3 +183,4 @@ fun CartScreen(
     }
   }
 }
+

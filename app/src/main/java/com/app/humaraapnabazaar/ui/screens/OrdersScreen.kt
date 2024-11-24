@@ -1,8 +1,11 @@
 package com.app.humaraapnabazaar.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,13 +42,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.app.humaraapnabazaar.R
 import com.app.humaraapnabazaar.data.model.OrderResponseItem
+import com.app.humaraapnabazaar.ui.navigation.Route
 import com.app.humaraapnabazaar.ui.viewmodels.ProductViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -68,7 +75,13 @@ fun OrdersScreen(
       Icon(
         imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
         contentDescription = "back",
-        modifier = Modifier.clickable { navController.popBackStack() },
+        modifier =
+          Modifier.clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+          ) {
+            navController.popBackStack()
+          },
       )
       Spacer(modifier = Modifier.width(8.dp))
       Text(
@@ -81,7 +94,34 @@ fun OrdersScreen(
     }
 
     if (orders.isEmpty()) {
-      Text("No orders found.", style = MaterialTheme.typography.bodyLarge)
+      Column(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+      ) {
+        Image(painter = painterResource(R.drawable.cart), contentDescription = "cart")
+        Text(
+          text = "You have no orders!",
+          style = MaterialTheme.typography.titleLarge,
+          fontWeight = FontWeight.Bold,
+        )
+        Text(
+          text = "Start shopping now!",
+          style = MaterialTheme.typography.titleMedium,
+          fontWeight = FontWeight.Bold,
+        )
+
+        Button(
+          modifier = Modifier.fillMaxWidth().padding(20.dp),
+          onClick = {
+            navController.navigate(Route.MainScreen) {
+              popUpTo(Route.MainScreen) { inclusive = true }
+            }
+          },
+        ) {
+          Text("Start Shopping")
+        }
+      }
     } else {
       Spacer(modifier = Modifier.height(8.dp))
       LazyColumn { items(orders) { order -> OrderItem(order = order) } }
@@ -97,14 +137,17 @@ fun OrderItem(order: OrderResponseItem) {
   // Format the createdAt date to "Date - Day" format
   val formattedDate = getRelativeTimeSpanString(order.createdAt)
 
-  Card(
-    modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-    shape = RoundedCornerShape(8.dp),
-  ) {
-    Column(modifier = Modifier.padding(16.dp)) {
+  Card(modifier = Modifier.fillMaxWidth().padding(10.dp), shape = RoundedCornerShape(8.dp)) {
+    Column(modifier = Modifier.padding(24.dp)) {
       // Order header (collapsed view)
       Row(
-        modifier = Modifier.fillMaxWidth().clickable { isExpanded = !isExpanded },
+        modifier =
+          Modifier.fillMaxWidth().clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+          ) {
+            isExpanded = !isExpanded
+          },
         verticalAlignment = Alignment.CenterVertically,
       ) {
         // Order image, name, and price in the collapsed state
@@ -140,7 +183,7 @@ fun OrderItem(order: OrderResponseItem) {
           OrderSteps(order)
 
           Text(
-            text = "Total: ₹${order.totalPrice}",
+            text = "Total: ₹${"%.2f".format(order.totalPrice)}",
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(bottom = 8.dp),
           )

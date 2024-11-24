@@ -1,6 +1,7 @@
 package com.app.humaraapnabazaar.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,13 +15,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,6 +47,7 @@ fun AccountScreen(
   navController: NavController,
 ) {
   val userProfileState = authViewModel.userProfileState.collectAsState()
+  var showLogoutDialog by remember { mutableStateOf(false) }
   LaunchedEffect(key1 = userProfileState) { authViewModel.getProfile() }
   Column(modifier = Modifier.fillMaxSize().safeContentPadding()) {
     // Title Row
@@ -56,7 +63,10 @@ fun AccountScreen(
     // Account
     Row(
       modifier =
-        Modifier.fillMaxWidth().padding(16.dp).clickable {
+        Modifier.fillMaxWidth().padding(16.dp).clickable(
+          indication = null,
+          interactionSource = remember { MutableInteractionSource() },
+        ) {
           navController.navigate(
             Route.AboutMeScreen(
               name = userProfileState.value.data?.name!!,
@@ -91,9 +101,13 @@ fun AccountScreen(
 
     // Orders
     Row(
-      modifier = Modifier.fillMaxWidth().padding(16.dp).clickable {
-        navController.navigate(Route.OrdersScreen)
-      },
+      modifier =
+        Modifier.fillMaxWidth().padding(16.dp).clickable(
+          indication = null,
+          interactionSource = remember { MutableInteractionSource() },
+        ) {
+          navController.navigate(Route.OrdersScreen)
+        },
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -117,23 +131,26 @@ fun AccountScreen(
         modifier = Modifier.size(24.dp),
       )
     }
-    // Sign Out
+    // Sign Out Row
     Row(
-      modifier = Modifier.fillMaxWidth().padding(16.dp).clickable {},
+      modifier =
+        Modifier.fillMaxWidth().padding(16.dp).clickable(
+          indication = null,
+          interactionSource = remember { MutableInteractionSource() },
+        ) {
+          showLogoutDialog = true
+        },
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.SpaceBetween,
     ) {
-      Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start,
-      ) {
+      Row(verticalAlignment = Alignment.CenterVertically) {
         Icon(
           painter = painterResource(R.drawable.signout),
-          contentDescription = "about_me",
+          contentDescription = "sign_out",
           tint = Color(0xFFAEDC81),
           modifier = Modifier.size(42.dp),
         )
-        Spacer(modifier = Modifier.width(8.dp)) // Space between Icon and Text
+        Spacer(modifier = Modifier.width(8.dp))
         Text(text = "Sign out", style = MaterialTheme.typography.bodyLarge)
       }
 
@@ -141,6 +158,29 @@ fun AccountScreen(
         imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
         contentDescription = "arrow_forward",
         modifier = Modifier.size(24.dp),
+      )
+    }
+
+    // Logout Confirmation Dialog
+    if (showLogoutDialog) {
+      AlertDialog(
+        onDismissRequest = { showLogoutDialog = false }, // Dismiss on outside click
+        title = { Text("Sign Out") },
+        text = { Text("Are you sure you want to sign out?") },
+        confirmButton = {
+          TextButton(
+            onClick = {
+              showLogoutDialog = false
+              authViewModel.logout() // Perform logout
+              navController.navigate(Route.LoginScreen) {
+                popUpTo(Route.HomeScreen) { inclusive = true }
+              }
+            }
+          ) {
+            Text("Yes")
+          }
+        },
+        dismissButton = { TextButton(onClick = { showLogoutDialog = false }) { Text("Cancel") } },
       )
     }
   }

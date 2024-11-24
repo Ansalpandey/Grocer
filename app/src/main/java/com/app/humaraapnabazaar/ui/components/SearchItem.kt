@@ -1,5 +1,7 @@
 package com.app.humaraapnabazaar.ui.components
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -20,7 +23,12 @@ import com.app.humaraapnabazaar.data.model.Product
 
 @Composable
 fun SearchItem(modifier: Modifier = Modifier, searchResponse: Product, onItemClicked: () -> Unit) {
-  Card(modifier = Modifier.fillMaxSize().height(100.dp)) {
+  Card(modifier = Modifier.fillMaxSize().height(100.dp).clickable(
+    indication = null,
+    interactionSource = remember { MutableInteractionSource() },
+  ) {
+    onItemClicked.invoke()
+  }) {
     Row {
       AsyncImage(
         model = searchResponse.productImage,

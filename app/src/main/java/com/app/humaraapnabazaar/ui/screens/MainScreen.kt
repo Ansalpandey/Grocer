@@ -3,6 +3,7 @@ package com.app.humaraapnabazaar.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -76,7 +77,10 @@ fun CategoryItem(
   onClick: () -> Unit,
 ) {
   Column(
-    modifier = Modifier.width(80.dp).padding(vertical = 8.dp).clickable { onClick.invoke() },
+    modifier = Modifier.width(80.dp).padding(vertical = 8.dp).clickable(
+      indication = null,
+      interactionSource = remember { MutableInteractionSource() },
+    ) { onClick.invoke() },
     horizontalAlignment = Alignment.CenterHorizontally,
     verticalArrangement = Arrangement.Center,
   ) {

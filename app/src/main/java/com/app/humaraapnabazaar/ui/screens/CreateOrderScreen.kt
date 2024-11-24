@@ -1,6 +1,8 @@
 package com.app.humaraapnabazaar.ui.screens
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -53,7 +55,17 @@ fun CreateOrderScreen(
   // Handle the UI elements and their state
   Column(modifier = modifier.fillMaxSize().safeContentPadding()) {
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-      Icon(imageVector = Icons.Default.ArrowBackIosNew, contentDescription = "back")
+      Icon(
+        imageVector = Icons.Default.ArrowBackIosNew,
+        contentDescription = "back",
+        modifier =
+          Modifier.clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+          ) {
+            navController.popBackStack()
+          },
+      )
       Text(
         modifier = Modifier.fillMaxWidth(),
         text = "Order Details",
@@ -117,7 +129,6 @@ fun CreateOrderScreen(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    // Total Price Section
     Row(
       modifier = Modifier.fillMaxWidth(),
       horizontalArrangement = Arrangement.SpaceBetween,
@@ -130,7 +141,7 @@ fun CreateOrderScreen(
         fontWeight = FontWeight.Bold,
       )
       Text(
-        text = "Rs. ${createOrderRequest.totalPrice}",
+        text = "Rs. ${"%.2f".format(createOrderRequest.totalPrice)}",
         style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.ExtraBold,
         modifier = Modifier.padding(end = 10.dp),
@@ -142,7 +153,11 @@ fun CreateOrderScreen(
 
     Button(
       onClick = {
-        // Prepare the updated shipping address
+        if (city.isEmpty() || address.isEmpty() || country.isEmpty() || postalCode.isEmpty()) {
+          Toast.makeText(navController.context, "Please fill in all fields", Toast.LENGTH_SHORT)
+            .show()
+          return@Button
+        }
         val updatedShippingAddress =
           ShippingAddressX(
             city = city,
@@ -171,7 +186,9 @@ fun CreateOrderScreen(
         productViewModel.createOrder(updatedOrderRequest)
 
         // Show a confirmation message
-        Toast.makeText(navController.context, "Order Placed!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(navController.context, "Order Placed!", Toast.LENGTH_SHORT).show().also {
+          navController.popBackStack()
+        }
       },
       modifier = Modifier.fillMaxWidth().padding(start = 20.dp, end = 20.dp),
     ) {
@@ -192,6 +209,10 @@ fun OrderItemRow(orderItem: OrderItemX) {
       style = MaterialTheme.typography.titleLarge,
       modifier = Modifier.weight(1f),
     )
-    Text(text = "Quantity: ${orderItem.quantity}", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(end = 10.dp))
+    Text(
+      text = "Quantity: ${orderItem.quantity}",
+      style = MaterialTheme.typography.titleLarge,
+      modifier = Modifier.padding(end = 10.dp),
+    )
   }
 }

@@ -1,6 +1,5 @@
 package com.app.humaraapnabazaar.ui.screens
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.app.humaraapnabazaar.data.model.AddToCartRequest
 import com.app.humaraapnabazaar.ui.components.SearchItem
 import com.app.humaraapnabazaar.ui.navigation.Route
 import com.app.humaraapnabazaar.ui.viewmodels.ProductViewModel
@@ -48,13 +46,14 @@ fun SearchScreen(
     if (query.isNotEmpty()) {
       delay(1000) // Debounce to avoid excessive API calls
       productViewModel.searchProducts(query)
+    } else {
+      productViewModel.clearSearchResults() // Clear search results when the query is empty
     }
   }
 
   Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
     // Search Bar
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-
       SearchBar(
         inputField = {
           InputField(
@@ -89,17 +88,17 @@ fun SearchScreen(
         modifier = Modifier.padding(16.dp),
       )
     } else {
-      LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-      ) {
+      LazyColumn(modifier = Modifier.fillMaxSize()) {
         items(products.value?.products!!) {
-          SearchItem(searchResponse = it, modifier = Modifier.fillMaxWidth().clickable {
-            navController.navigate(Route.ProductDetailsScreen(it._id).toString())
-          }) {
-            productViewModel.addToCart(AddToCartRequest(it._id, quantity = 1))
-          }
+          SearchItem(
+            searchResponse = it,
+            modifier = Modifier.fillMaxWidth(),
+            onItemClicked = { navController.navigate(Route.ProductDetailsScreen(it._id)) },
+          )
+          Spacer(modifier = Modifier.height(16.dp))
         }
       }
     }
   }
 }
+

@@ -1,6 +1,7 @@
 package com.app.humaraapnabazaar.ui.screens
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.width
@@ -59,7 +59,7 @@ fun AboutMeScreen(
   phone: String,
   authViewModel: AuthViewModel = hiltViewModel(),
 ) {
-  // State variables for editability and input values
+  // State variables for edit ability and input values
   var isEditingName by remember { mutableStateOf(false) }
   var isEditingEmail by remember { mutableStateOf(false) }
   var isEditingPhone by remember { mutableStateOf(false) }
@@ -81,7 +81,13 @@ fun AboutMeScreen(
       Icon(
         imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
         contentDescription = "back",
-        modifier = Modifier.clickable { navController.popBackStack() },
+        modifier =
+          Modifier.clickable(
+            indication = null,
+            interactionSource = remember { MutableInteractionSource() },
+          ) {
+            navController.popBackStack()
+          },
       )
       Spacer(modifier = Modifier.width(8.dp))
       Text(
@@ -144,7 +150,7 @@ fun AboutMeScreen(
         authViewModel.updateProfile(
           UpdateProfileRequest(name = editableName, email = editableEmail, phone = editablePhone)
         )
-      }
+      },
     ) {
       Text("Save Changes")
     }
@@ -176,12 +182,12 @@ fun AboutMeScreen(
         }
       },
     )
-Spacer(Modifier.height(20.dp))
+    Spacer(Modifier.height(20.dp))
     Button(
       modifier = Modifier.fillMaxWidth(),
       onClick = {
         authViewModel.forgetPassword(ForgetPasswordRequest(email = email, password = newPassword))
-      }
+      },
     ) {
       Text("Change Password")
     }

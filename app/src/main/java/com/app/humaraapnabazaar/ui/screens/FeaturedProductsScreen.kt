@@ -2,6 +2,7 @@ package com.app.humaraapnabazaar.ui.screens
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -20,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -31,6 +33,7 @@ import androidx.navigation.NavController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.app.humaraapnabazaar.data.model.AddToCartRequest
 import com.app.humaraapnabazaar.ui.components.ProductItem
+import com.app.humaraapnabazaar.ui.navigation.Route
 import com.app.humaraapnabazaar.ui.viewmodels.ProductViewModel
 
 @Composable
@@ -48,7 +51,10 @@ fun FeaturedProductsScreen(
       Icon(
         imageVector = Icons.AutoMirrored.Filled.ArrowBackIos,
         contentDescription = "back",
-        modifier = Modifier.padding(start = 20.dp).clickable { navController.popBackStack() },
+        modifier = Modifier.padding(start = 20.dp).clickable(
+          indication = null,
+          interactionSource = remember { MutableInteractionSource() },
+        ) { navController.popBackStack() },
       )
       Text(
         text = "Featured Products",
@@ -71,6 +77,9 @@ fun FeaturedProductsScreen(
           ProductItem(
             modifier = Modifier.padding(10.dp),
             product = product,
+            onClick = {
+              navController.navigate(Route.ProductDetailsScreen(productId = product._id))
+            },
             onAddToCart = {
               productViewModel.addToCart(AddToCartRequest(productId = product._id, quantity = 1))
               Toast.makeText(context, "Product added to cart", Toast.LENGTH_SHORT).show()

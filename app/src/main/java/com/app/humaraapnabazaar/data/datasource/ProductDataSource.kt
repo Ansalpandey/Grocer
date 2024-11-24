@@ -63,4 +63,16 @@ constructor(private val authenticatedApiService: AuthenticatedApiService) {
   suspend fun removeProductFromCart(productId: String) : Response<AddToCartResponse> {
     return authenticatedApiService.removeFromCart(productId)
   }
+
+  suspend fun getProductsByPriceRange(
+    minPrice: Double,
+    maxPrice: Double,
+    category: String,
+  ): Response<ProductByCategoryResponse>{
+    return authenticatedApiService.getProductsByPriceRange(
+      minPrice = minPrice,
+      maxPrice = maxPrice,
+      category = category,
+    )
+  }
 }

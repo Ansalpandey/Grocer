@@ -1,6 +1,5 @@
 package com.app.humaraapnabazaar.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.humaraapnabazaar.common.Resource
@@ -26,9 +25,7 @@ class CategoryViewModel @Inject constructor(private val categoryRepository: Cate
 
   private fun getCategories() {
     viewModelScope.launch {
-      categoryRepository.getCategories().collect { result -> _categories.value = result
-      Log.d("CategoryViewModel", "getCategories: $result")
-      }
+      categoryRepository.getCategories().collect { result -> _categories.value = result }
     }
   }
 }

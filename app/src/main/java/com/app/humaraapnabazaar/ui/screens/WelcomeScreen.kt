@@ -65,8 +65,9 @@ fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavHostControlle
       )
       Spacer(modifier = Modifier.height(8.dp))
       Text(
-        text = "Fresh, affordable, and convenient groceries at your fingertips.",
-        style = MaterialTheme.typography.bodyMedium,
+        text =
+          "Discover a world of fresh, affordable, and high-quality groceries, all delivered straight to your door. Shop with ease and convenience, anytime, anywhere.",
+        style = MaterialTheme.typography.bodyLarge,
         modifier = Modifier.fillMaxWidth(),
         color = Color.Gray,
       )
@@ -102,11 +103,12 @@ fun WelcomeScreen(modifier: Modifier = Modifier, navController: NavHostControlle
               text = "Create an account",
               modifier = Modifier.weight(1f),
               textAlign = TextAlign.Center,
+              fontSize = MaterialTheme.typography.titleMedium.fontSize,
             )
           }
         }
       }
-      Spacer(Modifier.height(8.dp))
+      Spacer(Modifier.height(20.dp))
       Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,

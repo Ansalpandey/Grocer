@@ -30,4 +30,6 @@ interface UserRepository {
   suspend fun getProfile(): Resource<ProfileResponse>
 
   suspend fun updateProfile(profileRequest: UpdateProfileRequest): Resource<UpdateProfileResponse>
+
+  suspend fun logout()
 }

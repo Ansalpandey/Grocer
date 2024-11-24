@@ -132,4 +132,10 @@ class AuthViewModel @Inject constructor(private val userRepository: UserReposito
       userRepository.updateProfile(profileRequest)
     }
   }
+
+  fun logout() {
+    viewModelScope.launch {
+      userRepository.logout()
+    }
+  }
 }

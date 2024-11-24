@@ -1,5 +1,7 @@
 package com.app.humaraapnabazaar.ui.navigation
 
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -34,12 +36,52 @@ fun NavigationSetup(
   val startDestination = if (userState.isLoggedIn) Route.MainScreen else Route.WelcomeScreen
 
   NavHost(navController = navController, startDestination = startDestination) {
-    composable<Route.WelcomeScreen> { WelcomeScreen(navController = navController) }
-    composable<Route.RegisterScreen> { RegisterScreen(navController = navController) }
-    composable<Route.LoginScreen> { LoginScreen(navController = navController) }
-    composable<Route.HomeScreen> { HomeScreen(modifier = modifier, navController = navController) }
-    composable<Route.MainScreen> { MainScreen(modifier = modifier, navController) }
-    composable<Route.AboutMeScreen> {
+    composable<Route.WelcomeScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
+      WelcomeScreen(navController = navController)
+    }
+    composable<Route.RegisterScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
+      RegisterScreen(navController = navController)
+    }
+    composable<Route.LoginScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
+      LoginScreen(navController = navController)
+    }
+    composable<Route.HomeScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
+      HomeScreen(modifier = modifier, navController = navController)
+    }
+    composable<Route.MainScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
+      MainScreen(modifier = modifier, navController)
+    }
+    composable<Route.AboutMeScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
       AboutMeScreen(
         name = it.arguments?.getString("name")!!,
         email = it.arguments?.getString("email")!!,
@@ -47,30 +89,64 @@ fun NavigationSetup(
         navController = navController,
       )
     }
-    composable<Route.CategoryWiseProductScreen> {
+    composable<Route.CategoryWiseProductScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
       CategoryWiseProductsScreen(
         categoryName = it.arguments?.getString("categoryName")!!,
+        categoryId = it.arguments?.getString("categoryId")!!,
         navController = navController,
       )
     }
 
-    composable<Route.ProductDetailsScreen> {
+    composable<Route.ProductDetailsScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
       ProductDetailScreen(
         productId = it.arguments?.getString("productId")!!,
         navController = navController,
       )
     }
 
-    composable<Route.FeaturedProductsScreen> {
+    composable<Route.FeaturedProductsScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
       FeaturedProductsScreen(navController = navController)
     }
 
-    composable<Route.CartScreen> { CartScreen(navController = navController) }
+    composable<Route.CartScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
+      CartScreen(navController = navController)
+    }
 
-    composable<Route.OrdersScreen> { OrdersScreen(navController = navController) }
+    composable<Route.OrdersScreen>(
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
+    ) {
+      OrdersScreen(navController = navController)
+    }
 
     composable<Route.CreateOrderScreen>(
-      typeMap = mapOf(typeOf<CreateOrderRequest>() to CreateOrderRequestNavType)
+      typeMap = mapOf(typeOf<CreateOrderRequest>() to CreateOrderRequestNavType),
+      enterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> -fullWidth }) },
+      exitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> fullWidth }) },
+      popEnterTransition = { slideInHorizontally(initialOffsetX = { fullWidth -> fullWidth }) },
+      popExitTransition = { slideOutHorizontally(targetOffsetX = { fullWidth -> -fullWidth }) },
     ) {
       CreateOrderScreen(
         navController = navController,

@@ -60,9 +60,17 @@ interface AuthenticatedApiService {
   suspend fun searchProducts(@Query("search") query: String): Response<SearchResponse>
 
   @POST("orders/create-order")
-  suspend fun createOrder(@Body createOrderRequest: CreateOrderRequest): Response<CreateOrderResponse>
+  suspend fun createOrder(
+    @Body createOrderRequest: CreateOrderRequest
+  ): Response<CreateOrderResponse>
 
   @DELETE("products/cart/{productId}")
   suspend fun removeFromCart(@Path("productId") productId: String): Response<AddToCartResponse>
 
+  @GET("products/price-range")
+  suspend fun getProductsByPriceRange(
+    @Query("minPrice") minPrice: Double,
+    @Query("maxPrice") maxPrice: Double,
+    @Query("category") category: String,
+  ): Response<ProductByCategoryResponse>
 }

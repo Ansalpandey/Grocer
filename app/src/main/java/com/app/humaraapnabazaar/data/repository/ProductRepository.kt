@@ -36,4 +36,10 @@ interface ProductRepository {
   suspend fun createOrder(orderRequest: CreateOrderRequest) : Response<CreateOrderResponse>
 
   suspend fun removeProductFromCart(productId: String) : Response<AddToCartResponse>
+
+  suspend fun getProductsByPriceRange(
+    minPrice: Double,
+    maxPrice: Double,
+    category: String,
+  ): Response<ProductByCategoryResponse>
 }

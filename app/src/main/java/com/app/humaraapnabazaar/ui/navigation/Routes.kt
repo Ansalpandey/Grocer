@@ -25,7 +25,7 @@ sealed class Route {
   @Serializable
   data class AboutMeScreen(val name: String, val email: String, val phone: String) : Route()
 
-  @Serializable data class CategoryWiseProductScreen(val categoryName: String) : Route()
+  @Serializable data class CategoryWiseProductScreen(val categoryName: String, val categoryId: String) : Route()
 
   @Serializable data class ProductDetailsScreen(val productId: String) : Route()
 

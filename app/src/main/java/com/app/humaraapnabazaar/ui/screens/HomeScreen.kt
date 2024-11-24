@@ -3,6 +3,7 @@ package com.app.humaraapnabazaar.ui.screens
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -96,13 +98,15 @@ fun HomeScreen(
       // Categories Row
       categories.value.data?.let { categoryList ->
         LazyRow(
-          modifier = Modifier.fillMaxWidth().padding(16.dp),
+          modifier = Modifier.fillMaxWidth().padding(10.dp),
           horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
           items(categoryList) { category ->
             CategoryItem(
               categoriesResponseItem = category,
-              onClick = { navController.navigate(Route.CategoryWiseProductScreen(category.name)) },
+              onClick = {
+                navController.navigate(Route.CategoryWiseProductScreen(category.name, category._id))
+              },
             )
           }
         }
@@ -125,7 +129,10 @@ fun HomeScreen(
           contentDescription = "arrow_forward",
           tint = Color.Gray,
           modifier =
-            Modifier.size(24.dp).clickable { navController.navigate(Route.FeaturedProductsScreen) },
+            Modifier.size(24.dp).clickable(
+              indication = null,
+              interactionSource = remember { MutableInteractionSource() },
+            ) { navController.navigate(Route.FeaturedProductsScreen) },
         )
       }
       Spacer(Modifier.height(10.dp))
@@ -136,6 +143,9 @@ fun HomeScreen(
               Modifier.clickable {
                 navController.navigate(Route.ProductDetailsScreen(productId = product!!._id))
               },
+            onClick = {
+              navController.navigate(Route.ProductDetailsScreen(productId = product?._id!!))
+            },
             product = product!!,
             onAddToCart = {
               productViewModel.addToCart(AddToCartRequest(productId = product._id, quantity = 1))

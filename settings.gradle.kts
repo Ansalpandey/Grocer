@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HumaraApnaBazaar"
+rootProject.name = "Humara Apna Bazaar"
 include(":app")

@@ -1,5 +1,6 @@
 package com.app.humaraapnabazaar.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +44,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -67,14 +69,22 @@ fun LoginScreen(
   val state = authViewModel.loggedInUserStateHolder.collectAsState()
   val email = rememberSaveable { mutableStateOf("") }
   val password = rememberSaveable { mutableStateOf("") }
+  val context = LocalContext.current
   var passwordVisible by rememberSaveable { mutableStateOf(false) }
-  var showForgotPasswordDialog by rememberSaveable  { mutableStateOf(false) }
+  var showForgotPasswordDialog by rememberSaveable { mutableStateOf(false) }
 
   LaunchedEffect(state.value.isLoggedIn) {
     if (state.value.isLoggedIn) {
       navController.navigate(Route.MainScreen) { popUpTo(Route.LoginScreen) { inclusive = true } }
     }
   }
+
+  LaunchedEffect(state.value.error) {
+    if (state.value.error?.isNotEmpty() == true) {
+      Toast.makeText(context, state.value.error.toString(), Toast.LENGTH_SHORT).show()
+    }
+  }
+
   Box(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
     Image(
       painter = painterResource(R.drawable.login_screen_1),
@@ -112,12 +122,13 @@ fun LoginScreen(
           modifier = Modifier.fillMaxSize(),
           singleLine = true,
           maxLines = 1,
-          colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Black,
-            focusedTextColor = Color.Black
-          ),
+          colors =
+            TextFieldDefaults.colors(
+              focusedContainerColor = Color.Transparent,
+              unfocusedContainerColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Black,
+              focusedTextColor = Color.Black,
+            ),
           leadingIcon = {
             Icon(
               imageVector = Icons.Default.Email,
@@ -138,12 +149,13 @@ fun LoginScreen(
           modifier = Modifier.fillMaxSize(),
           singleLine = true,
           maxLines = 1,
-          colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Black,
-            focusedTextColor = Color.Black
-          ),
+          colors =
+            TextFieldDefaults.colors(
+              focusedContainerColor = Color.Transparent,
+              unfocusedContainerColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Black,
+              focusedTextColor = Color.Black,
+            ),
           trailingIcon = {
             val icon =
               if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
@@ -167,18 +179,20 @@ fun LoginScreen(
       }
       Spacer(Modifier.height(10.dp))
       Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        Text("Forgot password?", color = Color(0xFF407EC7), fontWeight = FontWeight.Bold, modifier = Modifier.clickable {
-          showForgotPasswordDialog = true
-        })
+        Text(
+          "Forgot password?",
+          color = Color(0xFF407EC7),
+          fontWeight = FontWeight.Bold,
+          modifier = Modifier.clickable { showForgotPasswordDialog = true },
+        )
         if (showForgotPasswordDialog) {
           ForgotPasswordDialog(
             onDismissRequest = { showForgotPasswordDialog = false },
             onSubmit = { email, newPassword ->
-              authViewModel.forgetPassword(ForgetPasswordRequest(
-                email = email,
-                password = newPassword
-              ))
-            }
+              authViewModel.forgetPassword(
+                ForgetPasswordRequest(email = email, password = newPassword)
+              )
+            },
           )
         }
       }
@@ -192,9 +206,13 @@ fun LoginScreen(
       ) {
         Button(
           onClick = {
+            if (email.value.isEmpty() || password.value.isEmpty()) {
+              Toast.makeText(context, "Email and password are required", Toast.LENGTH_SHORT).show()
+            }
             authViewModel.loginUser(LoginRequest(email = email.value, password = password.value))
           },
           modifier = Modifier.fillMaxSize(),
+          enabled = email.value.isNotEmpty() && password.value.isNotEmpty(),
           colors =
             ButtonDefaults.buttonColors(
               containerColor = Color.Transparent,
@@ -248,7 +266,7 @@ fun LoginScreen(
 @Composable
 fun ForgotPasswordDialog(
   onDismissRequest: () -> Unit,
-  onSubmit: (email: String, newPassword: String) -> Unit
+  onSubmit: (email: String, newPassword: String) -> Unit,
 ) {
   var passwordVisible by rememberSaveable { mutableStateOf(false) }
   val email = rememberSaveable { mutableStateOf("") }
@@ -256,22 +274,22 @@ fun ForgotPasswordDialog(
 
   Dialog(onDismissRequest = { onDismissRequest() }) {
     Box(
-      modifier = Modifier
-        .fillMaxWidth()
-        .clip(RoundedCornerShape(12.dp))
-        .background(Color.White)
-        .padding(16.dp)
+      modifier =
+        Modifier.fillMaxWidth()
+          .clip(RoundedCornerShape(12.dp))
+          .background(Color.White)
+          .padding(16.dp)
     ) {
       Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
       ) {
         Text(
           text = "Reset Password",
           style = MaterialTheme.typography.headlineSmall,
           fontWeight = FontWeight.Bold,
-          color = Color.Black
+          color = Color.Black,
         )
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -280,15 +298,14 @@ fun ForgotPasswordDialog(
           onValueChange = { email.value = it },
           label = { Text("Email") },
           modifier = Modifier.fillMaxWidth(),
-          leadingIcon = {
-            Icon(Icons.Default.Email, contentDescription = "Email")
-          },
-          colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Black,
-            focusedTextColor = Color.Black
-          ),
+          leadingIcon = { Icon(Icons.Default.Email, contentDescription = "Email") },
+          colors =
+            TextFieldDefaults.colors(
+              focusedContainerColor = Color.Transparent,
+              unfocusedContainerColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Black,
+              focusedTextColor = Color.Black,
+            ),
         )
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -297,10 +314,9 @@ fun ForgotPasswordDialog(
           onValueChange = { newPassword.value = it },
           label = { Text("New Password") },
           modifier = Modifier.fillMaxWidth(),
-          leadingIcon = {
-            Icon(Icons.Default.Lock, contentDescription = "New Password")
-          },
-          visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+          leadingIcon = { Icon(Icons.Default.Lock, contentDescription = "New Password") },
+          visualTransformation =
+            if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
           trailingIcon = {
             val icon =
               if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
@@ -312,25 +328,21 @@ fun ForgotPasswordDialog(
               )
             }
           },
-          colors = TextFieldDefaults.colors(
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Black,
-            focusedTextColor = Color.Black
-          ),
+          colors =
+            TextFieldDefaults.colors(
+              focusedContainerColor = Color.Transparent,
+              unfocusedContainerColor = Color.Transparent,
+              unfocusedIndicatorColor = Color.Black,
+              focusedTextColor = Color.Black,
+            ),
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
           Button(
             onClick = { onDismissRequest() },
-            colors = ButtonDefaults.buttonColors(
-              containerColor = Color.Gray,
-              contentColor = Color.White
-            )
+            colors =
+              ButtonDefaults.buttonColors(containerColor = Color.Gray, contentColor = Color.White),
           ) {
             Text("Cancel")
           }
@@ -341,10 +353,11 @@ fun ForgotPasswordDialog(
                 onDismissRequest()
               }
             },
-            colors = ButtonDefaults.buttonColors(
-              containerColor = Color(0xFF6CC51D),
-              contentColor = Color.White
-            )
+            colors =
+              ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF6CC51D),
+                contentColor = Color.White,
+              ),
           ) {
             Text("Submit")
           }
@@ -353,4 +366,3 @@ fun ForgotPasswordDialog(
     }
   }
 }
-

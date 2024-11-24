@@ -50,15 +50,13 @@ constructor(
   fun getProducts() {
     viewModelScope.launch {
       Pager(
-        config = PagingConfig(pageSize = 100, enablePlaceholders = false, initialLoadSize = 30)
-      ) {
-        productsPagingSource
-      }
+          config = PagingConfig(pageSize = 100, enablePlaceholders = false, initialLoadSize = 30)
+        ) {
+          productsPagingSource
+        }
         .flow
         .cachedIn(viewModelScope)
-        .collect { pagingData ->
-          _products.value = pagingData ?: PagingData.empty()
-        }
+        .collect { pagingData -> _products.value = pagingData ?: PagingData.empty() }
     }
   }
 
@@ -67,18 +65,16 @@ constructor(
 
     viewModelScope.launch {
       Pager(
-        config = PagingConfig(pageSize = 100, enablePlaceholders = false, initialLoadSize = 30)
-      ) {
-        ProductByCategoryPagingSource(
-          productRepository = productRepository,
-          category = categoryName,
-        )
-      }
+          config = PagingConfig(pageSize = 100, enablePlaceholders = false, initialLoadSize = 30)
+        ) {
+          ProductByCategoryPagingSource(
+            productRepository = productRepository,
+            category = categoryName,
+          )
+        }
         .flow
         .cachedIn(viewModelScope)
-        .collect { pagingData ->
-          _productsByCategory.value = pagingData ?: PagingData.empty()
-        }
+        .collect { pagingData -> _productsByCategory.value = pagingData ?: PagingData.empty() }
     }
   }
 
@@ -150,5 +146,23 @@ constructor(
       }
     }
   }
-}
 
+  fun getProductsByPriceRange(minPrice: Double, maxPrice: Double, category: String) {
+    viewModelScope.launch {
+      val response =
+        productRepository.getProductsByPriceRange(
+          minPrice = minPrice,
+          maxPrice = maxPrice,
+          category = category,
+        )
+
+      if (response.isSuccessful) {
+        _productsByCategory.value = PagingData.from(response.body()?.products ?: emptyList())
+      }
+    }
+  }
+
+  fun clearSearchResults() {
+    _searchedProducts.value = _searchedProducts.value?.copy(products = emptyList())
+  }
+}
