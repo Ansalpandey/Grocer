@@ -242,24 +242,44 @@ fun ProductDetailScreen(
       }
     }
 
-    // Always visible Add to Cart Button
-    Button(
-      modifier =
-        Modifier.align(Alignment.BottomCenter)
-          .fillMaxWidth()
-          .padding(horizontal = 16.dp)
-          .height(50.dp)
-          .clip(RoundedCornerShape(12.dp)),
-      onClick = {
-        val product = productDetails.value
-        if (product != null) {
-          productViewModel.addToCart(AddToCartRequest(productId = product._id, quantity = quantity))
-        }
-      },
-      colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
-      contentPadding = PaddingValues(8.dp),
-    ) {
-      Text(text = "Add to Cart", fontSize = 18.sp, color = Color.White)
+    if (productDetails.value?.inStock == true) {
+      Button(
+        modifier =
+          Modifier.align(Alignment.BottomCenter)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(50.dp)
+            .clip(RoundedCornerShape(12.dp)),
+        onClick = {
+          val product = productDetails.value
+          if (product != null) {
+            productViewModel.addToCart(
+              AddToCartRequest(productId = product._id, quantity = quantity)
+            )
+          }
+        },
+        colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.primary),
+        contentPadding = PaddingValues(8.dp),
+      ) {
+        Text(text = "Add to Cart", fontSize = 18.sp, color = Color.White)
+      }
+    } else {
+      Button(
+        onClick = {},
+        modifier =
+          Modifier.align(Alignment.BottomCenter)
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+            .height(50.dp),
+        enabled = false,
+        colors = ButtonDefaults.buttonColors(
+          disabledContainerColor = Color.Red,
+          disabledContentColor = Color.White,
+        ),
+        contentPadding = PaddingValues(8.dp),
+      ) {
+        Text(text = "Unavailable")
+      }
     }
   }
 }

@@ -69,13 +69,13 @@ fun FeaturedProductsScreen(
     LazyVerticalGrid(
       columns = GridCells.Fixed(2),
       modifier = Modifier.weight(1f).fillMaxSize(),
-      contentPadding = PaddingValues(16.dp),
+      contentPadding = PaddingValues(8.dp),
     ) {
       items(products.itemCount) { index ->
         val product = products[index]
         if (product != null) {
           ProductItem(
-            modifier = Modifier.padding(10.dp),
+            modifier = Modifier.padding(6.dp),
             product = product,
             onClick = {
               navController.navigate(Route.ProductDetailsScreen(productId = product._id))

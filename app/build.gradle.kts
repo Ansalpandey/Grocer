@@ -17,8 +17,8 @@ android {
     minSdk = 28
     //noinspection EditedTargetSdkVersion
     targetSdk = 35
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = 2
+    versionName = "1.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -84,5 +84,5 @@ dependencies {
 
   implementation("androidx.paging:paging-runtime:3.1.1")
   implementation("androidx.paging:paging-compose:1.0.0-alpha17")
-  implementation ("com.github.a914-gowtham:compose-ratingbar:1.2.3")
+  implementation("com.github.a914-gowtham:compose-ratingbar:1.2.3")
 }

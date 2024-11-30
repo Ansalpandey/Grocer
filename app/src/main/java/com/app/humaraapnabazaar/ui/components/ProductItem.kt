@@ -87,11 +87,10 @@ fun ProductItem(
           Text(
             text = "${product.discount}% OFF",
             color = Color.White,
-            fontSize = 12.sp,
+            fontSize = 10.sp,
             fontWeight = FontWeight.Bold,
             modifier =
-              Modifier.background(MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp))
-                .padding(horizontal = 6.dp, vertical = 2.dp),
+              Modifier.background(MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp)),
           )
         }
       }
@@ -149,39 +148,48 @@ fun ProductItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
       ) {
-        if (cartCount > 0) {
-          IconButton(
-            onClick = {
-              cartCount = (cartCount - 1).coerceAtLeast(0)
-              onAddToCart(cartCount)
+        if (product.inStock) {
+          if (cartCount > 0) {
+            IconButton(
+              onClick = {
+                cartCount = (cartCount - 1).coerceAtLeast(0)
+                onAddToCart(cartCount)
+              }
+            ) {
+              Icon(imageVector = Icons.Default.Remove, contentDescription = "decrement")
             }
-          ) {
-            Icon(imageVector = Icons.Default.Remove, contentDescription = "decrement")
-          }
-          Text(
-            text = cartCount.toString(),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(horizontal = 8.dp),
-          )
-          IconButton(
-            onClick = {
-              cartCount++
-              onAddToCart(cartCount)
+            Text(
+              text = cartCount.toString(),
+              fontSize = 16.sp,
+              fontWeight = FontWeight.Bold,
+              modifier = Modifier.padding(horizontal = 8.dp),
+            )
+            IconButton(
+              onClick = {
+                cartCount++
+                onAddToCart(cartCount)
+              }
+            ) {
+              Icon(imageVector = Icons.Default.Add, contentDescription = "increment")
             }
-          ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = "increment")
+          } else {
+            TextButton(
+              onClick = {
+                cartCount = 1
+                onAddToCart(cartCount)
+              }
+            ) {
+              Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "add_to_cart")
+              Text("Add to cart")
+            }
           }
         } else {
-          TextButton(
-            onClick = {
-              cartCount = 1
-              onAddToCart(cartCount)
-            }
-          ) {
-            Icon(imageVector = Icons.Default.ShoppingCart, contentDescription = "add_to_cart")
-            Text("Add to cart")
-          }
+          Text(
+            text = "Unavailable",
+            fontSize = 14.sp,
+            color = Color.Gray,
+            fontWeight = FontWeight.Bold,
+          )
         }
       }
     }

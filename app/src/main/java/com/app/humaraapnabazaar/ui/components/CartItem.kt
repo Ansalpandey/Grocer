@@ -92,19 +92,31 @@ fun CartItem(
 
         // Original Price with Strikethrough and Discounted Price
         Row(verticalAlignment = Alignment.CenterVertically) {
-          Text(
-            text = "₹${cartResponseItem.product.price}",
-            style =
-              MaterialTheme.typography.bodyMedium.copy(textDecoration = TextDecoration.LineThrough),
-            color = Color.Gray,
-          )
-          Spacer(modifier = Modifier.width(8.dp))
-          Text(
-            text = "₹${"%.2f".format(discountedPrice)}",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.primary,
-            fontWeight = FontWeight.Bold,
-          )
+          if (cartResponseItem.product.discount > 0) {
+            Text(
+              text = "₹${cartResponseItem.product.price}",
+              style =
+                MaterialTheme.typography.bodyMedium.copy(
+                  textDecoration = TextDecoration.LineThrough
+                ),
+              color = Color.Gray,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+              text = "₹${"%.2f".format(discountedPrice)}",
+              style = MaterialTheme.typography.bodyLarge,
+              color = MaterialTheme.colorScheme.primary,
+              fontWeight = FontWeight.Bold,
+            )
+          } else {
+            // If there's no discount, just show the original price without strikethrough
+            Text(
+              text = "₹${cartResponseItem.product.price}",
+              style = MaterialTheme.typography.bodyLarge,
+              color = MaterialTheme.colorScheme.primary,
+              fontWeight = FontWeight.Bold,
+            )
+          }
         }
 
         // Quantity
