@@ -1,7 +1,6 @@
 package com.app.humaraapnabazaar.di
 
 import android.content.Context
-import com.app.humaraapnabazaar.HumaraApnaBazaarApplication
 import com.app.humaraapnabazaar.data.api.ApiService
 import com.app.humaraapnabazaar.data.api.AuthInterceptor
 import com.app.humaraapnabazaar.data.api.AuthenticatedApiService
@@ -18,8 +17,6 @@ import com.app.humaraapnabazaar.data.repository.ProductRepository
 import com.app.humaraapnabazaar.data.repository.UserRepository
 import com.app.humaraapnabazaar.utils.TokenManager
 import com.app.humaraapnabazaar.utils.TokenRefreshManager
-import dagger.BindsInstance
-import dagger.Component
 import dagger.Lazy
 import dagger.Module
 import dagger.Provides
