@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:name=".HumaraApnaBazaarApplication"
+        android:name="com.app.grocer.GrocerApplication"
         android:allowBackup="true"
         android:usesCleartextTraffic="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.app.grocer.MainActivity"
             android:exported="true"
             tools:ignore="DiscouragedApi,LockedOrientationActivity"
             android:screenOrientation="portrait"
